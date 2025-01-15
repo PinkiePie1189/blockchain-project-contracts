@@ -10,17 +10,17 @@ describe("blacksmith", () => {
 
   const program = anchor.workspace.Blacksmith as Program<Blacksmith>;
 
+  let [pda] = PublicKey.findProgramAddressSync(
+    [Buffer.from("owner_pda")],
+    program.programId
+  );
+
   it("Create Asset", async () => {
 
     let createAssetArgs = {
       name: 'My Asset',
       uri: 'https://example.com/my-asset.json',
     };
-
-    let [pda] = PublicKey.findProgramAddressSync(
-      [Buffer.from("owner_pda")],
-      program.programId
-    );
 
     let [pdaUser] = PublicKey.findProgramAddressSync(
       [Buffer.from("user_pda")],
@@ -53,6 +53,22 @@ describe("blacksmith", () => {
         signer: anchor.Wallet.local().publicKey,
         newOwner: new PublicKey("AfYgWMf8enCy81Xni5sKBui2EddZSMuJjjTFgnkCmUpQ"),
         coreProgram: MPL_CORE_PROGRAM_ID
+      })
+      .signers([anchor.Wallet.local().payer])
+      .rpc();
+  
+    console.log(createAssetTx);
+  })
+
+  it("Upgrade NFT", async () => {
+    let asset = new PublicKey("DLzTay33woq4qxHi3eBHSE35aU6m2sMQH9SJxbYa44pZ")
+    const createAssetTx = await program.methods.upgradeNft()
+      .accountsPartial({
+        asset: asset,
+        payer: anchor.Wallet.local().publicKey,
+        authority: pda,
+        coreProgram: MPL_CORE_PROGRAM_ID,
+        systemProgram: SystemProgram.programId
       })
       .signers([anchor.Wallet.local().payer])
       .rpc();
