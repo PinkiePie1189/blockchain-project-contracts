@@ -60,28 +60,29 @@ describe("blacksmith", () => {
   //   console.log(createAssetTx);
   // })
 
-  // it("Upgrade NFT", async () => {
-  //   let asset = new PublicKey("DLzTay33woq4qxHi3eBHSE35aU6m2sMQH9SJxbYa44pZ")
-  //   const createAssetTx = await program.methods.upgradeNft()
-  //     .accountsPartial({
-  //       asset: asset,
-  //       payer: anchor.Wallet.local().publicKey,
-  //       authority: pda,
-  //       coreProgram: MPL_CORE_PROGRAM_ID,
-  //       systemProgram: SystemProgram.programId
-  //     })
-  //     .signers([anchor.Wallet.local().payer])
-  //     .rpc();
+  it("Upgrade NFT", async () => {
+    let asset = new PublicKey("d9gUf9YjGfhyLpwt7AZbtfbhR4fpx9347Wf7CP9sW9j")
+    const createAssetTx = await program.methods.upgradeNft()
+      .accountsPartial({
+        asset: asset,
+        payer: anchor.Wallet.local().publicKey,
+        authority: pda,
+        coreProgram: MPL_CORE_PROGRAM_ID,
+        systemProgram: SystemProgram.programId
+      })
+      .signers([anchor.Wallet.local().payer])
+      .rpc();
   
-  //   console.log(createAssetTx);
-  // })
+    console.log(createAssetTx);
+  })
 
   it("SCRAP NFT", async() =>  {
-    let asset = new PublicKey("3uPwGVT9d7GaaxpRxKwErx8mZgP9t3fctr2NkxHoTXgQ")
+    let asset = new PublicKey("d9gUf9YjGfhyLpwt7AZbtfbhR4fpx9347Wf7CP9sW9j")
     const scrap = await program.methods.scrapItem()
       .accountsPartial({
         asset: asset,
         payer: anchor.Wallet.local().publicKey,
+        authority: pda,
         coreProgram: MPL_CORE_PROGRAM_ID,
         systemProgram: SystemProgram.programId
       })
