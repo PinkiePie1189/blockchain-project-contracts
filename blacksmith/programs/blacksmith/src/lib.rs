@@ -59,8 +59,8 @@ pub mod blacksmith {
     use std::borrow::Cow;
 
     use anchor_lang::{accounts::signer, solana_program::system_program, system_program::Transfer, system_program::transfer};
-    use anchor_spl::metadata::mpl_token_metadata::instructions::{CreateV1CpiBuilder, UpdateAsAuthorityItemDelegateV2CpiBuilder};
-    use mpl_core::instructions::{CreateCollectionV2CpiBuilder, CreateV2CpiBuilder, TransferV1CpiBuilder, UpdateV1CpiBuilder, UpdateV2CpiBuilder};
+    // use anchor_spl::metadata::mpl_token_metadata::instructions::{CreateV1CpiBuilder, UpdateAsAuthorityItemDelegateV2CpiBuilder};
+    use mpl_core::instructions::{BurnCollectionV1CpiBuilder, CreateCollectionV2CpiBuilder, CreateV2CpiBuilder, TransferV1CpiBuilder, UpdateV1CpiBuilder, UpdateV2CpiBuilder, BurnV1CpiBuilder};
 
     use super::*;
 
@@ -83,7 +83,7 @@ pub mod blacksmith {
                     from: ctx.accounts.signer.to_account_info(),
                     to: ctx.accounts.owner_pda.to_account_info()
                 });
-                // transfer(cpi_ctx, 1000000000)?;
+                transfer(cpi_ctx, 1000000000)?;
             }
         } else {
             user.last_free_request_time = Some(now);
@@ -157,6 +157,14 @@ pub mod blacksmith {
         Ok(())
     }
 
+    pub fn scrap_item(ctx: Context<ScrapItem>) -> Result<()> {
+        let _ = BurnV1CpiBuilder::new(&ctx.accounts.core_program.to_account_info())
+                .asset(&ctx.accounts.asset.to_account_info())
+                .authority(Some(ctx.accounts.payer.to_account_info()).as_ref())
+                .payer(&ctx.accounts.payer.to_account_info())
+                .invoke()?;
+        Ok(())
+    }
 
     pub fn upgrade_nft(ctx: Context<UpgradeNft>) -> Result<()> {
 
@@ -363,6 +371,23 @@ pub struct RequestItem<'info> {
     /// CHECK:` [MBLAC] Swift linter
     pub system_program: Program<'info, System>,
    
+}
+
+#[derive(Accounts)]
+pub struct ScrapItem<'info> {
+    /// CHECK:` [MBLAC] Swift linter
+    #[account(mut)]
+    pub asset: AccountInfo<'info>,
+
+    /// CHECK:` [MBLAC] Swift linter
+    #[account(address = MPL_CORE_ID)]
+    pub core_program: UncheckedAccount<'info>,
+
+    /// CHECK:` [MBLAC] Swift linter
+    #[account(mut)]
+    pub payer: Signer<'info>,
+    /// CHECK:` [MBLAC] Swift linter
+    pub system_program: AccountInfo<'info>
 }
 
 
