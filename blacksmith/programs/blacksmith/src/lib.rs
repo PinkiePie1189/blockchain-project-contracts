@@ -72,7 +72,7 @@ pub mod blacksmith {
 
     use super::*;
 
-    pub fn request_item(ctx: Context<RequestItem>, pay_with_token: bool) -> Result<()> {
+    pub fn request_item(ctx: Context<RequestItem>) -> Result<()> {
         let clock = Clock::get()?;
         let now = clock.unix_timestamp;
         let user = &mut ctx.accounts.user;
@@ -81,7 +81,6 @@ pub mod blacksmith {
             if now >= last_request + 24 * 60 * 60 {
                 user.last_free_request_time = Some(now);
             } else {
-                require!(pay_with_token, CustomError::FreeItemUnavailable);
                 let cpi_ctx = CpiContext::new(
                     ctx.accounts.system_program.to_account_info(),
                     Transfer {

@@ -18,11 +18,13 @@ describe("blacksmith", () => {
     program.programId
   );
 
+  console.log(pda, pdaUser)
+
   const asset = Keypair.generate();
   console.log(asset.publicKey)
   it("Request Item", async () => {
     const createAssetTx = await program.methods
-      .requestItem(true)
+      .requestItem()
       .accountsPartial({
         asset: asset.publicKey,
         signer: anchor.Wallet.local().publicKey,
